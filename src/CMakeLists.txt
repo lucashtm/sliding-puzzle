@@ -1,5 +1,6 @@
 # add_executable(SlidingPuzzle frontend3d.c)
 add_executable(${PROJECT_NAME} frontend3d.c)
+target_include_directories(${CMAKE_SOURCE_DIR}/raylib)
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
 
