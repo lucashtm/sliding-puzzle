@@ -1,25 +1,4 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-// #define SIZE 4
-#define EMPTY -1
-#define PRESENT 1
-#define TEXT_MODE 0
-#define IMAGE_MODE 1
-
-// Game data
-#define GAME_SIZE 4
-#define GAME_TEXT "SAPOATORCASAUVA"
-
-struct Game {
-  short* positions;
-  int size;
-  char* text;
-  short empty;
-};
-
-typedef struct Game Game;
+#include "backend.h"
 
 Game game;
 
@@ -41,12 +20,10 @@ void log_game_data() {
 
 void init_game() {
   game.size = GAME_SIZE;
-
-
   game.text = GAME_TEXT;
+  short *shuffled = malloc(sizeof(short) * ((game.size * game.size) - 1));
 
   log_game_data();
-  short *shuffled = malloc(sizeof(short) * ((game.size * game.size) - 1));
   for (int i = 0; i < (game.size * game.size) - 1; i++) {
     shuffled[i] = i;
   }

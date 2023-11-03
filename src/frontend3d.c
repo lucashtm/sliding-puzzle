@@ -1,12 +1,11 @@
 #include <string.h>
+#include "backend.h"
 #include "raylib.h"
 #include "raymath.h"
 
 #define RLIGHTS_IMPLEMENTATION
 #include "rlights.h"
-#include "raymath.h"
 
-#include "backend.h"
 
 #if defined(PLATFORM_WEB)
     #include <emscripten/emscripten.h>
