@@ -11,11 +11,7 @@
     #include <emscripten/emscripten.h>
 #endif
 
-#if defined(PLATFORM_DESKTOP)
-    #define GLSL_VERSION            330
-#else   // PLATFORM_ANDROID, PLATFORM_WEB
-    #define GLSL_VERSION            100
-#endif
+#define GLSL_VERSION            330
 
 #define SQUARE_SIZE 2.0f
 #define CUBE_THICKNESS 0.3f
@@ -51,13 +47,13 @@ int main() {
 
 
   InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
-  pieceModel = LoadModel("piece.obj");
-  fontBig = LoadFontEx("FS Clerkenwell Bold.otf", FONT_SIZE, NULL, 0);
-  fontSmall = LoadFontEx("FS Clerkenwell Bold.otf", FONT_SIZE - 12, NULL, 0);
+  pieceModel = LoadModel("resources/models/piece.obj");
+  fontBig = LoadFontEx("resources/fonts/FS Clerkenwell Bold.otf", FONT_SIZE, NULL, 0);
+  fontSmall = LoadFontEx("resources/fonts/FS Clerkenwell Bold.otf", FONT_SIZE - 12, NULL, 0);
   square_color = GetColor(0xffffffff);
 
   image = GenImageColor(SQUARE_SIZE * 512, SQUARE_SIZE * 512, square_color);
-  shader = LoadShader("shaders/lighting.vs", "shaders/lighting.fs");
+  shader = LoadShader("resources/shaders/lighting.vs", "resources/shaders/lighting.fs");
   // Get some required shader locations
   shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
   // NOTE: "matModel" location name is automatically assigned on shader loading, 
