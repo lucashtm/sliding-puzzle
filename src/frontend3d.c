@@ -54,11 +54,29 @@ int main() {
   pieceModel = LoadModel("piece.obj");
   fontBig = LoadFontEx("FS Clerkenwell Bold.otf", FONT_SIZE, NULL, 0);
   fontSmall = LoadFontEx("FS Clerkenwell Bold.otf", FONT_SIZE - 12, NULL, 0);
-  square_color = GetColor(0x574a8fff);
+  square_color = GetColor(0xffffffff);
 
   image = GenImageColor(SQUARE_SIZE * 512, SQUARE_SIZE * 512, square_color);
-  /* shader = LoadShader(TextFormat("resources/shaders/glsl%i/lighting.vs", GLSL_VERSION), */
-                               /* TextFormat("resources/shaders/glsl%i/lighting.fs", GLSL_VERSION)); */
+  shader = LoadShader("shaders/lighting.vs", "shaders/lighting.fs");
+  // Get some required shader locations
+  shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
+  // NOTE: "matModel" location name is automatically assigned on shader loading, 
+  // no need to get the location again if using that uniform name
+  //shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(shader, "matModel");
+
+  // Ambient light level (some basic lighting)
+  int ambientLoc = GetShaderLocation(shader, "ambient");
+  SetShaderValue(shader, ambientLoc, (float[4]){ 0.1f, 0.1f, 0.1f, 1.0f }, SHADER_UNIFORM_VEC4);
+
+  // Assign out lighting shader to model
+  pieceModel.materials[0].shader = shader;
+  // Create lights
+  Light lights[MAX_LIGHTS] = { 0 };
+  /* lights[0] = CreateLight(LIGHT_POINT, (Vector3){ -2, 1, -2 }, Vector3Zero(), WHITE, shader); */
+  lights[1] = CreateLight(LIGHT_POINT, (Vector3){ 2, 1, 15 }, Vector3Zero(), WHITE, shader);
+  /* lights[2] = CreateLight(LIGHT_POINT, (Vector3){ -2, 1, 2 }, Vector3Zero(), WHITE, shader); */
+  lights[3] = CreateLight(LIGHT_POINT, (Vector3){ 2, 1, -2 }, Vector3Zero(), WHITE, shader);
+
   init_game();
   gen_pieces();
   init_camera();
@@ -154,7 +172,7 @@ void draw_piece(float x_pos, float y_pos, int game_pos, size_t index) {
   Vector3 cubePosition = { x_pos, -y_pos, 0.0f };
   SetMaterialTexture(&pieceModel.materials[0], MATERIAL_MAP_DIFFUSE, *pieces[game_pos].texture);
   DrawModel(pieceModel, cubePosition, 1.0f, WHITE);
-  DrawModelWires(pieceModel, cubePosition, 1, BLACK);
+  /* DrawModelWires(pieceModel, cubePosition, 1, BLACK); */
 }
 
 Texture2D gen_char_texture(const char character) {
@@ -163,7 +181,7 @@ Texture2D gen_char_texture(const char character) {
   Vector2 text_dimensions = MeasureTextEx(fontBig, str, FONT_SIZE, 0);
   Vector2 position = {image.width/4.0f - text_dimensions.x/2.0f, image.height/4.0f - text_dimensions.y/2.0f};
   ImageDrawRectangle(&image, 0, 0, image.width/2.0f, image.height/2.0f, square_color);
-  ImageDrawTextEx(&image, fontBig, str, position, (float)fontBig.baseSize, 0, RAYWHITE);
+  ImageDrawTextEx(&image, fontBig, str, position, (float)fontBig.baseSize, 0, BLACK);
 
   // DEBUG
   /* Rectangle rect = {position.x, position.y, text_dimensions.x, text_dimensions.y}; */
@@ -195,6 +213,7 @@ void UpdateDrawFrame(void) {
       move_right();
     }
  
+    /* UpdateCamera(&camera, CAMERA_ORBITAL); */
     // Draw
     //----------------------------------------------------------------------------------
     BeginDrawing();
